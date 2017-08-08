@@ -12,7 +12,7 @@ namespace BlogWebsite.Models
         public string Username { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
+       
         public string password { get; set; }
 
         public bool RememberMe { get; set; }

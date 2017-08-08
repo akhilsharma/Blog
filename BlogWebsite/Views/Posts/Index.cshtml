@@ -4,20 +4,21 @@
     ViewBag.Title = "Index";
 }
 
-<table>
-    <tr>
-        <td>&nbsp; </td>
-        <td style="margin-left:50px;">
-            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })
-        </td>
-        <td>
-            <form action="~/Posts/Search" method="post" style="margin-left:720px;">
-                <input type="text" name="sr" value="" />
-                <input type="submit" name="submit" value="Search By tags" class="btn btn-success " />
-            </form>
-        </td>
-    </tr>
-</table>
+<div>
+   
+        <div>&nbsp; </div>
+        <div>
+@if (Context.User.Identity.IsAuthenticated) {
+            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success" })}
+        </div>
+    <div>
+        <form action="~/Posts/Search" method="post" style="margin-left:720px;">
+            <input type="text" name="sr" value="" />
+            <input type="submit" name="submit" value="Search By tags" class="btn btn-success " />
+        </form>
+    </div>
+  
+</div>
 
 
 
@@ -31,7 +32,7 @@
             @foreach (var tag in item.Tags)
             {
             <label>
-                @tag.Name |
+               @Html.ActionLink(@tag.Name+"|", "Search","Posts",new { sr=@tag.Name}, null)
             </label>
             }
         </div>
@@ -40,14 +41,14 @@
         </div>
     </div>
     <div class="row">
-        <p class="lead">@item.Text.Substring(0,100)...</p>
+        <p class="lead">@item.Text.Substring(0,100)....</p>
     </div>
     <div class="row">
         <div class="col-md-3">
             <label style="font-size :smaller">Views: @item.Views</label>
         </div>
         <div class="col-md-3">
-            <label style="font-size :smaller">By: @item.Author</label>
+            <label style="font-size :smaller">Author:@Html.ActionLink( @item.Author,"Create","Authors",new {name=@item.Author },null)</label>
         </div>
         <div class="col-md-6">
             <p style="text-align:right"><a href="~/Posts/Details/@item.ID" class="btn btn-primary btn-lg">View Post &raquo;</a></p>

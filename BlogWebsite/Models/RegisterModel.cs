@@ -15,13 +15,14 @@ namespace BlogWebsite.Models
         public string Email { get; set; }
 
         [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
 
         [Required]
+        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
-        public string SecurityQuestion { get; set; }
+        public List<string> Expertise { get; set; }
 
-        public string SecurityAnswer{ get; set; }
     }
 }

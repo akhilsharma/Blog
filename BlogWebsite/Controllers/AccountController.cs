@@ -10,6 +10,7 @@ namespace BlogWebsite.Controllers
 {
     public class AccountController : Controller
     {
+         const string PostAddModelKey = "_post_model";
         // GET: Account
         public ActionResult Login()
         {
@@ -17,52 +18,69 @@ namespace BlogWebsite.Controllers
         }
 
         [HttpPost]
-        public ActionResult Login(Models.LoginModel model)
+        public ActionResult Login(LoginModel model)
         {
             if (Membership.ValidateUser(model.Username, model.password))
             {
-                CreateAuthenticationToken(model);
+                FormsAuthentication.SetAuthCookie(model.Username,true);
+                Session["Details"] = model.Username;
+              
                 return RedirectToAction("Index","Posts");
             }
             return RedirectToAction("Login");
         }
 
-        [NonAction]
-        private void CreateAuthenticationToken(LoginModel model)
-        {
-            string userData = string.Join("|", model.Username, DateTime.Now);
-
-            var ticket =new  FormsAuthenticationTicket(
-                 1,                                     // ticket version
-              model.Username,                              // authenticated username
-              DateTime.Now,                          // issueDate
-              DateTime.Now.AddMinutes(30),           // expiryDate
-              model.RememberMe,                          // true to persist across browser sessions
-              userData,                              // can be used to store additional user data
-              System.Web.Security.FormsAuthentication.FormsCookiePath);
-
-            string encryptedTicket = System.Web.Security.FormsAuthentication.Encrypt(ticket);
-
-            HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName,encryptedTicket);
-
-            cookie.HttpOnly = true;
-            Response.Cookies.Add(cookie);
-
-        }
 
         // GET: Account/Register
         [HttpGet]
         public ActionResult Register()
         {
+           
+        
             return View();
         }
 
         [HttpPost]
-        public ActionResult Register(RegisterModel model)
+        public ActionResult Register(RegisterModel user)
         {
-            Membership.CreateUser(model.Username,model.Password,model.Email);
-            return RedirectToAction("Login");
+            Membership.CreateUser(user.Username,user.Password,user.Email);
+           
+            return RedirectToAction("CreateAuthor");
+        }
+        public ActionResult CreateAuthor()
+        {
+            return View();
+        }
+        public ActionResult LogOff()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Index", "Posts");
         }
 
+        public ActionResult ShowProfile()
+        {
+           
+               var user = Membership.GetUser();
+            RegisterModel r = new RegisterModel();
+            r.Username = user.UserName;
+            r.Email = user.Email;
+
+
+
+            return View(r);
+        }
+
+        [HttpPost]
+        public ActionResult ShowProfile(RegisterModel model)
+        {
+            var user = Membership.GetUser();
+           
+             user.Email=model.Email;
+           
+            Membership.UpdateUser(user);
+           return RedirectToAction("Index","Posts");
+        }
+
+     
     }
 }

@@ -39,13 +39,14 @@ namespace BlogWebsite.Controllers
             }
 
 
-            List<Comment> com = db.Comments.Where(x => x.PostID == id).ToList();
+            List<Comment> com = db.Comments.Where(x => x.Post.ID == id).ToList();
 
             ViewModel vm = new ViewModel { post = post, comment = com };
             return View("Details", vm);
         }
 
         // GET: Posts/Create
+        [Authorize]
         public ActionResult Create()
         {
             Post _model = null;
@@ -76,6 +77,15 @@ namespace BlogWebsite.Controllers
             return RedirectToAction("Create");
         }
 
+        [HttpPost]
+        public ActionResult Add(Post model)
+        {
+            
+            model.Tags.Add(new Tag() { Name = "", ID = model.ID });
+            TempData[PostAddModelKey] = model;
+            return RedirectToAction("Edit",new { model.ID});
+        }
+
         // POST: Posts/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -101,7 +111,7 @@ namespace BlogWebsite.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.Include(X =>X.Tags).FirstOrDefault();
             if (post == null)
             {
                 return HttpNotFound();
@@ -145,10 +155,52 @@ namespace BlogWebsite.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Post post = db.Posts.Find(id);
+            Post post = db.Posts.Include(x =>x.Tags).FirstOrDefault();
             db.Posts.Remove(post);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+
+        //[HttpPost]
+        public ActionResult Search(string sr)
+        {
+            using (var d = new ApplicationDbContext())
+            {
+
+                var _list = d.Posts.Where(p => p.Tags.Any(t => t.Name.Contains(sr))).Include(p => p.Tags).ToList();
+               
+                return View("Index", _list);
+
+            }
+        }
+
+
+        public ActionResult Comment( string name,string comment, int Id)
+        {
+            using (var d = new ApplicationDbContext())
+            {
+                int def = 0;
+                name = User.Identity.Name;
+                d.Database.ExecuteSqlCommand("Insert Into Comments Values('" +name+ "','" + comment + "','" + def + "','" + Id + "')");
+                Post p = db.Posts.Where(x => x.ID == Id).Include(x => x.Tags).FirstOrDefault();
+                List<Comment> com = db.Comments.Where(x => x.Post.ID == Id).ToList();
+                ViewModel vm = new ViewModel { post = p, comment = com };
+                return View("Details", vm);
+            }
+        }
+
+        public ActionResult ReplyComment(string name, string comment, int Id, int ParentID)
+        {
+            using (var d = new ApplicationDbContext())
+            {
+                d.Database.ExecuteSqlCommand("Insert Into Comments Values('" + name + "','" + comment + "','" + ParentID + "','" + Id + "')");
+                Post p = db.Posts.Where(x => x.ID == Id).Include(x => x.Tags).FirstOrDefault();
+                List<Comment> com = db.Comments.Where(x => x.Post.ID == Id).ToList();
+                ViewModel vm = new ViewModel { post = p, comment = com };
+                return View("Details", vm);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -159,48 +211,6 @@ namespace BlogWebsite.Controllers
             }
             base.Dispose(disposing);
         }
-
-        //[HttpPost]
-        //public ActionResult Search(string sr)
-        //{
-        //    using (var d = new ApplicationDbContext())
-        //    {
-        //        //List<Post> list = d.Database.SqlQuery<Post>($"Select * From Posts Where ID in (Select Post_ID From Tags Where Name Like '%{sr}%')").ToList<Post>();
-        //        List<Post> list = d.Posts.Where()
-        //        if (list == null)
-        //            return View("Index", db.Posts.Include(x => x.Tags).ToList());
-        //        else
-
-        //            return View("Index", list);
-        //    }
-        //}
-
-        public ActionResult Comment(string name, string comment, int Id)
-        {
-            using (var d = new ApplicationDbContext())
-            {
-                int def = 0;
-                d.Database.ExecuteSqlCommand("Insert Into Comments Values('" + name + "','" + comment + "','" + Id + "','" + def + "')");
-                Post p = db.Posts.Where(x => x.ID == Id).Include(x => x.Tags).FirstOrDefault();
-                List<Comment> com = db.Comments.Where(x => x.PostID == Id).ToList();
-                ViewModel vm = new ViewModel { post = p, comment = com };
-                return View("Details", vm);
-            }
-        }
-
-        public ActionResult ReplyComment(string name, string comment, int Id, int ParentID)
-        {
-            using (var d = new ApplicationDbContext())
-            {
-                d.Database.ExecuteSqlCommand("Insert Into Comments Values('" + name + "','" + comment + "','" + Id + "','" + ParentID + "')");
-                Post p = db.Posts.Where(x => x.ID == Id).Include(x => x.Tags).FirstOrDefault();
-                List<Comment> com = db.Comments.Where(x => x.PostID == Id).ToList();
-                ViewModel vm = new ViewModel { post = p, comment = com };
-                return View("Details", vm);
-            }
-        }
-
-
 
     }
 }
