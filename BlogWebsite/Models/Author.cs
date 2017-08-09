@@ -11,6 +11,7 @@ namespace BlogWebsite.Models
         public string FullName { get; set; }
         public string UserName { get; set; }
         public string Expertise { get; set; }
+        public string About { get; set; }
         public List<int> Followers { get; set; }
         public List<int> Follows { get; set; }
     }

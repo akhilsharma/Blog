@@ -37,5 +37,6 @@ namespace BlogWebsite.Models
         public System.Data.Entity.DbSet<BlogWebsite.Models.Comment> Comments { get; set; }
         public System.Data.Entity.DbSet<BlogWebsite.Models.Follower> Followers { get; set; }
         public System.Data.Entity.DbSet<BlogWebsite.Models.Author> Authors { get; set; }
+        public System.Data.Entity.DbSet<BlogWebsite.Models.ImageModel> Images { get; set; }
     }
 }

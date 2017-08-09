@@ -199,8 +199,10 @@
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Follower.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ImageModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\ProfileView.cs" />
     <Compile Include="Models\RegisterModel.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\ViewModel.cs" />
@@ -267,7 +269,7 @@
     <Content Include="Views\Authors\Details.cshtml" />
     <Content Include="Views\Authors\Edit.cshtml" />
     <Content Include="Views\Authors\Index.cshtml" />
-    <Content Include="Views\Authors\Display.cshtml" />
+    <Content Include="Views\Authors\ShowProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

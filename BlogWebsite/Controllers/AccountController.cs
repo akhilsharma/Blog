@@ -5,6 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using BlogWebsite.Models;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace BlogWebsite.Controllers
 {
@@ -71,16 +74,63 @@ namespace BlogWebsite.Controllers
         }
 
         [HttpPost]
-        public ActionResult ShowProfile(RegisterModel model)
+        public ActionResult ShowProfile(ProfileView model, HttpPostedFileBase file)
         {
+            RegisterModel r = new RegisterModel();
             var user = Membership.GetUser();
            
-             user.Email=model.Email;
+             user.Email=r.Email;
            
             Membership.UpdateUser(user);
-           return RedirectToAction("Index","Posts");
+           
+                Image myImg = Image.FromStream(file.InputStream, true, true);
+                ImageModel img = new ImageModel();
+                using (var d = new ApplicationDbContext())
+                {
+                    img.Data = ConvertToBytes(myImg);
+                    img.Username = User.Identity.Name;
+                    img.MimeType = myImg.GetType().ToString();
+                    d.Images.Add(img);
+                    d.SaveChanges();
+                }
+            ProfileView p = new ProfileView();
+            Author a = new Author();
+            p.Register = r;
+            p.ath.Expertise = a.Expertise;
+            p.ath.About = a.About;
+                return RedirectToAction("Index", "Posts");
+
+
+
+           
+        }
+        public ActionResult GetImage(string Username)
+        {
+            using (var d = new ApplicationDbContext())
+            {
+
+                var image = d.Images.FirstOrDefault(x => x.Username == Username);
+                if (image != null)
+                {
+                    byte[] arr = image.Data;
+
+                    MemoryStream ms = new MemoryStream(arr);
+                    //Image returnImage = Image.FromStream(ms); 
+                    return new FileContentResult(ms.ToArray(), "image/*");
+                }
+
+                else
+                    return new EmptyResult();
+
+            }
+
+        }
+        private static byte[] ConvertToBytes(Image myImg)
+        {
+            MemoryStream ms = new MemoryStream();
+            myImg.Save(ms, ImageFormat.Jpeg);
+            return ms.ToArray();
         }
 
-     
     }
 }
