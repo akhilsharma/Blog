@@ -202,6 +202,19 @@ namespace BlogWebsite.Controllers
                 return View("Details", vm);
             }
         }
+        
+        public ActionResult Like(int id)
+        {
+            Likes model = new Likes();
+            model.PostID = id;
+            model.UserName = User.Identity.Name;
+            db.Likes.Add(model);
+            db.SaveChanges();
+            List<Likes> m = db.Likes.Where(x => x.PostID == model.PostID).ToList();
+            return PartialView("_Like",model);
+        }
+
+        
 
         protected override void Dispose(bool disposing)
         {

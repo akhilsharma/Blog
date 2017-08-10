@@ -3,29 +3,55 @@
 @{
     ViewBag.Title = "Details";
 }
-
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
 <h1>@Model.post.Title</h1>
 <div style="margin-top: 50px">
     <div class="row">
         <div class="col-md-8">
-            <img src="~/image/tag.png" height="30" width="30" />
+            
             @foreach (var item in Model.post.Tags)
             {
-                <label>@item.Name |</label>
+                <i class="fa fa-tag" aria-hidden="true"></i>
+                <label>@item.Name</label>
             }
         </div>
         <div class="col-md-4">
             <label>@Model.post.Date</label>
         </div>
     </div>
-    <div class="row" style="margin-top: 50px">
+    <div class="row" style="text-align:justify">
         <div class="col-md-12"><p style="font-size:large">@Model.post.Text</p></div>
     </div>
     <div class="row" style="margin-top: 50px">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <label>By : @Model.post.Author</label>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
+            @*<div class="form-group">
+                <form action="~/Posts/Like" method="post" class="form-horizontal">
+                    <button type="submit" class="btn btn-success">
+                             <i class="fa fa-thumbs-up"></i> Like
+    |
+    <span class="like-count">@Model.Like</span>
+                            </button>*@
+                    <div id="Like">
+                        @Ajax.ActionLink("Like", "Like",new {id=Model.post.ID },
+        new AjaxOptions
+        {
+            UpdateTargetId = "Like",
+            InsertionMode = InsertionMode.InsertBefore,
+            HttpMethod = "Get"
+        })
+                        
+                    </div>
+
+                    @*<input type="hidden" name="UserName" value="@User.Identity.Name"/>
+                    <input type="hidden" name="PostID" value="@Model.post.ID" />
+                </form>*@
+                
+</div>
+        
+        <div class="col-md-4">
             <p style="text-align:right"><a href="~/Posts/Index" class="btn btn-primary btn-lg">Back &raquo;</a></p>
         </div>
     </div>
@@ -155,7 +181,10 @@
         });
     </script>
 
-
+    <div >
+        @Html.ActionLink("Edit|", "Edit")
+        @Html.ActionLink("Delete|", "Delete")
+    </div>
 }
 
 

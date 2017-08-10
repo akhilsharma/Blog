@@ -9,5 +9,6 @@ namespace BlogWebsite.Models
     {
         public Post post { get; set; }
         public List<Comment> comment { get; set; }
+        public Likes Like { get; set; }
     }
 }

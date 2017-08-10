@@ -7,6 +7,9 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BlogWebsite.Models;
+using System.Drawing;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace BlogWebsite.Controllers
 {
@@ -49,8 +52,9 @@ namespace BlogWebsite.Controllers
                 a.FullName = ath.FullName;
                 a.Expertise = ath.Expertise;
                 a.UserName = ath.UserName;
+                a.About = ath.About;
 
-                return View("Display",a);
+                return View("ShowProfile",a);
             }
         }
 
@@ -59,12 +63,22 @@ namespace BlogWebsite.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,FullName,UserName,Expertise")] Author author)
+        public ActionResult Create([Bind(Include = "ID,FullName,UserName,Expertise,About")] Author author, HttpPostedFileBase file)
         {
             if (ModelState.IsValid)
             {
                 db.Authors.Add(author);
                 db.SaveChanges();
+                Image myImg = Image.FromStream(file.InputStream, true, true);
+                ImageModel img = new ImageModel();
+                using (var d = new ApplicationDbContext())
+                {
+                    img.Data = ConvertToBytes(myImg);
+                    img.Username = User.Identity.Name;
+                    img.MimeType = myImg.GetType().ToString();
+                    d.Images.Add(img);
+                    d.SaveChanges();
+                }
                 return RedirectToAction("Index");
             }
 
@@ -97,10 +111,38 @@ namespace BlogWebsite.Controllers
             {
                 db.Entry(author).State = EntityState.Modified;
                 db.SaveChanges();
+               
                 return RedirectToAction("Index");
             }
             return View(author);
         }
+        public ActionResult GetImage(string Username)
+        {
+            using (var d = new ApplicationDbContext())
+            {
+
+                var image = d.Images.FirstOrDefault(x => x.Username == Username);
+                if (image != null)
+                {
+                    byte[] arr = image.Data;
+
+                    MemoryStream ms = new MemoryStream(arr);
+                    //Image returnImage = Image.FromStream(ms); 
+                    return new FileContentResult(ms.ToArray(), "image/*");
+                }
+
+                else
+                    return new EmptyResult();
+
+            } }
+
+        private static byte[] ConvertToBytes(Image myImg)
+        {
+            MemoryStream ms = new MemoryStream();
+            myImg.Save(ms, ImageFormat.Jpeg);
+            return ms.ToArray();
+        }
+
 
         // GET: Authors/Delete/5
         public ActionResult Delete(int? id)
