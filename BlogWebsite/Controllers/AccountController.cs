@@ -13,7 +13,10 @@ namespace BlogWebsite.Controllers
 {
     public class AccountController : Controller
     {
-         const string PostAddModelKey = "_post_model";
+
+        private ApplicationDbContext db = new ApplicationDbContext();
+
+        const string PostAddModelKey = "_post_model";
         // GET: Account
         public ActionResult Login()
         {
@@ -48,7 +51,7 @@ namespace BlogWebsite.Controllers
         {
             Membership.CreateUser(user.Username,user.Password,user.Email);
            
-            return RedirectToAction("CreateAuthor");
+            return RedirectToAction("");
         }
         public ActionResult CreateAuthor()
         {
@@ -67,23 +70,41 @@ namespace BlogWebsite.Controllers
             RegisterModel r = new RegisterModel();
             r.Username = user.UserName;
             r.Email = user.Email;
-
-
-
-            return View(r);
+            ProfileView p = new ProfileView();
+           
+            
+            p.Register.Email = r.Email;
+            p.Register.Username = r.Username;
+            try
+            {
+               Author a = db.Authors.Where(X =>X.UserName.Equals (r.Username)).FirstOrDefault();
+                p.ath.FullName = a.FullName;
+                p.ath.Expertise = a.Expertise;
+                p.ath.About = a.About;
+            }
+            catch
+            {
+                
+            }
+            return View(p);
         }
 
         [HttpPost]
         public ActionResult ShowProfile(ProfileView model, HttpPostedFileBase file)
         {
-            RegisterModel r = new RegisterModel();
-            var user = Membership.GetUser();
-           
-             user.Email=r.Email;
-           
+            Author a = new Author();          
+            var user = Membership.GetUser(); 
+             user.Email=model.Register.Email;
+            a.UserName = model.Register.Username;          
+            a.FullName = model.ath.FullName;
+           a.Expertise=model.ath.Expertise;
+            a.About = model.ath.About;
+            db.Authors.Add(a);
+            db.SaveChanges();
             Membership.UpdateUser(user);
-           
-                Image myImg = Image.FromStream(file.InputStream, true, true);
+
+
+            Image myImg = Image.FromStream(file.InputStream, true, true);
                 ImageModel img = new ImageModel();
                 using (var d = new ApplicationDbContext())
                 {
@@ -93,16 +114,8 @@ namespace BlogWebsite.Controllers
                     d.Images.Add(img);
                     d.SaveChanges();
                 }
-            ProfileView p = new ProfileView();
-            Author a = new Author();
-            p.Register = r;
-            p.ath.Expertise = a.Expertise;
-            p.ath.About = a.About;
-                return RedirectToAction("Index", "Posts");
-
-
-
-           
+         
+                return RedirectToAction("Index", "Posts");          
         }
         public ActionResult GetImage(string Username)
         {
