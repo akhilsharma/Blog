@@ -19,13 +19,37 @@
             <label>@Model.post.Date</label>
         </div>
     </div>
-    <div class="row" style="text-align:justify">
-        <div class="col-md-12"><p style="font-size:large">@Model.post.Text</p></div>
+    <div class="row" style="text-align:justify" >
+        <div class="col-md-12"style="font-size:large"><p style="text">@Html.Raw(@Model.post.Text)</p></div>
     </div>
     <div class="row" style="margin-top: 50px">
-        <div class="col-md-4">
-            <label>By : @Model.post.Author</label>
-        </div>
+        <div class="col-md-4"><i class="fa fa-pencil-square" aria-hidden="true"></i>
+    @if (Model.post.Author == User.Identity.Name)
+            { 
+               <label> Author:@*@Html.ActionLink(@item.Author, "ShowProfile", "Account", new { name = @item.Author }, null)</label>*@
+                <a href="@Url.Action("ShowProfile", "Account",new { name=Model.post.Author})">
+                    <span>
+                        <strong>@Model.post.Author</strong>
+                    </span>
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+
+                </a>
+            </label>
+    }
+    else
+    {
+        <label>
+            Author:@*@Html.ActionLink(@item.Author, "Create", "Authors", new { name = @item.Author }, null)*@
+            <a href="@Url.Action("Create", "Authors",new { name=Model.post.Author})">
+                <span>
+                    <strong>@Model.post.Author</strong>
+                </span>
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+
+            </a>
+        </label>
+    }
+</div>
         <div class="col-md-4">
             @*<div class="form-group">
                 <form action="~/Posts/Like" method="post" class="form-horizontal">
@@ -34,14 +58,15 @@
     |
     <span class="like-count">@Model.Like</span>
                             </button>*@
+           
                     <div id="Like">
-                        @Ajax.ActionLink("Like", "Like",new {id=Model.post.ID },
+                        @Ajax.ActionLink("Like", "Like", new { id = Model.post.ID ,name=User.Identity.Name},
         new AjaxOptions
         {
             UpdateTargetId = "Like",
-            InsertionMode = InsertionMode.InsertBefore,
+            InsertionMode = InsertionMode.Replace,
             HttpMethod = "Get"
-        })
+        })<i class="fa fa-thumbs-up"></i>
                         
                     </div>
 
@@ -52,7 +77,7 @@
 </div>
         
         <div class="col-md-4">
-            <p style="text-align:right"><a href="~/Posts/Index" class="btn btn-primary btn-lg">Back &raquo;</a></p>
+            <p style="text-align:right"><a href="~/Posts/Index" class="btn btn-primary btn-lg" >Back<i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a></p>
         </div>
     </div>
 </div>
@@ -180,12 +205,14 @@
             });
         });
     </script>
-
+    if (Model.post.Author == User.Identity.Name)
+    {
     <div >
         @Html.ActionLink("Edit|", "Edit")
         @Html.ActionLink("Delete|", "Delete")
     </div>
-}
+        }
+    }
 
 
 

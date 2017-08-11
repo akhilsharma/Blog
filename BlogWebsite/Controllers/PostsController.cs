@@ -203,15 +203,20 @@ namespace BlogWebsite.Controllers
             }
         }
         
-        public ActionResult Like(int id)
+        public ActionResult Like(int id,string name)
         {
+            
             Likes model = new Likes();
-            model.PostID = id;
-            model.UserName = User.Identity.Name;
-            db.Likes.Add(model);
-            db.SaveChanges();
+      
+            if (model.UserName != name)
+            {
+                model.PostID = id;
+                model.UserName = name;
+                db.Likes.Add(model);
+                db.SaveChanges();
+            }
             List<Likes> m = db.Likes.Where(x => x.PostID == model.PostID).ToList();
-            return PartialView("_Like",model);
+            return PartialView("_Like",m);
         }
 
         

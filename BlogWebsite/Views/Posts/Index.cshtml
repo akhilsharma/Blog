@@ -4,61 +4,62 @@
     ViewBag.Title = "Index";
 }
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-<div>
-   
+
+    <div>
+
         <div>&nbsp; </div>
         <div>
-@if (Context.User.Identity.IsAuthenticated)
-{
-            @*@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success", })*@
-    <a href="@Url.Action("Create", "Posts")" class="btn btn-primary">
-        <span>
-            <strong>Create</strong>
-        </span>
-        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-    </a>
-}
-        </div>
-    <div>
-        <form action="~/Posts/Search" method="post" style="margin-left:720px;">
-            <input type="text" name="sr" value="" />
-            <button type="submit" name="submit"  class="btn btn-success " ><i class="fa fa-search" aria-hidden="true"></i>Tags</button>
-        </form>
-    </div>
-  
-</div>
-
-
-
-@foreach (var item in Model)
-{
-<div class="jumbotron">
-    <h2>@item.Title</h2>
-    <div class="row">
-        <div class="col-md-8">
-           
-            @foreach (var tag in item.Tags)
+            @if (Context.User.Identity.IsAuthenticated)
             {
-                <i class="fa fa-tag" aria-hidden="true"></i>
-            <label> @Html.ActionLink(@tag.Name , "Search","Posts",new { sr=@tag.Name}, null)</label>
+                @*@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-success", })*@
+                <a href="@Url.Action("Create", "Posts")" class="btn btn-primary">
+                    <span>
+                        <strong>Create</strong>
+                    </span>
+                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                </a>
             }
         </div>
-        <div class="col-md-4">
-            <i class="fa fa-calendar" aria-hidden="true"></i><label>@item.Date</label>
+        <div>
+            <form action="~/Posts/Search" method="post" style="margin-left:720px;">
+                <input type="text" name="sr" value="" placeholder="Search" />
+                <button type="submit" name="submit" class="btn btn-success "><i class="fa fa-search" aria-hidden="true"></i></button>
+            </form>
         </div>
+
     </div>
-    <div class="row">
-        <p class="lead">@item.Text.Substring(0,100)....</p>
-    </div>
-    <div class="row">
-        <div class="col-md-3">
-            <i class="fa fa-eye" aria-hidden="true"></i><label >Views: @item.Views</label>
-        </div>
-        <div class="col-md-3">
-            @if (item.Author == User.Identity.Name)
-            { <i class="fa fa-pencil-square" aria-hidden="true"></i> <label>
+
+
+
+    @foreach (var item in Model)
+    {
+        <div class="jumbotron" style="background-color:seashell">
+            <h2>@item.Title</h2>
+            <div class="row">
+                <div class="col-md-8">
+
+                    @foreach (var tag in item.Tags)
+                    {
+                        <i class="fa fa-tag" aria-hidden="true"></i>
+                        <label> @Html.ActionLink(@tag.Name, "Search", "Posts", new { sr = @tag.Name }, null)</label>
+                    }
+                </div>
+                <div class="col-md-4">
+                    <i class="fa fa-calendar" aria-hidden="true"></i><label>@item.Date</label>
+                </div>
+            </div>
+            <div class="row">
+                <p class="lead">@Html.Raw(@item.Text.Substring(0, 80))....</p>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <i class="fa fa-eye" aria-hidden="true"></i><label>Views: @item.Views</label>
+                </div>
+                <div class="col-md-3">
+                    @if (item.Author == User.Identity.Name)
+                    { <i class="fa fa-pencil-square" aria-hidden="true"></i> <label>
                 Author:@*@Html.ActionLink(@item.Author, "ShowProfile", "Account", new { name = @item.Author }, null)</label>*@
-                <a href="@Url.Action("ShowProfile", "Account")">
+                <a href="@Url.Action("ShowProfile", "Account",new { name=@item.Author})">
                     <span>
                         <strong>@item.Author</strong>
                     </span>
@@ -66,25 +67,25 @@
 
                 </a>
             </label>
-            }
-            else
-            {
-                <label >
-                    Author:@*@Html.ActionLink(@item.Author, "Create", "Authors", new { name = @item.Author }, null)*@
-                    <a href="@Url.Action("Create", "Authors")" >
-                        <span>
-                            <strong>@item.Author</strong>
-                        </span>
-                        <i class="fa fa-info-circle" aria-hidden="true"></i>
+                    }
+                    else
+                    {
+                        <label>
+                            Author:@*@Html.ActionLink(@item.Author, "Create", "Authors", new { name = @item.Author }, null)*@
+                            <a href="@Url.Action("Create", "Authors",new { name=@item.Author})">
+                                <span>
+                                    <strong>@item.Author</strong>
+                                </span>
+                                <i class="fa fa-info-circle" aria-hidden="true"></i>
 
-                    </a>
-                </label>
-            }
-        </div>
+                            </a>
+                        </label>
+                    }
+                </div>
 
-        <div class="col-md-6">
-            <p style="text-align:right"><a href="~/Posts/Details/@item.ID" class="btn btn-primary btn-lg">View Post &raquo;</a></p>
+                <div class="col-md-6">
+                    <p style="text-align:right"><a href="~/Posts/Details/@item.ID" class="btn btn-primary btn-lg">View Post &raquo;</a></p>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-}
+    }

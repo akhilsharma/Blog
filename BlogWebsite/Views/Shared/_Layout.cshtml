@@ -1,99 +1,104 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Blog Application</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+﻿
+    <!DOCTYPE html >
+    <html style="background-color:darkgray">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - Blog Application</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
 
-</head>
-<body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @*@Html.ActionLink("Blogs", "Index", "Posts", new { area = "" }, new { @class = "navbar-brand" })*@
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="@Url.Action("Index", "Posts")">
-                            <i class="fa fa-rss-square" aria-hidden="true" style="color:wheat"></i>
-                            <span>
-                                <strong>Home</strong>
-                            </span>
-                        </a>
-                    </li></ul>
-</div>
-            <div class="navbar-collapse collapse">
-                @*<ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                </ul>*@
-                @if (User.Identity.IsAuthenticated)
-                {
+    </head>
+    <body style="background-color:darkgray">
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @*@Html.ActionLink("Blogs", "Index", "Posts", new { area = "" }, new { @class = "navbar-brand" })*@
                     <ul class="nav navbar-nav navbar-right">
-                        @*<li>@Html.ActionLink("Welcome!" + @User.Identity.Name, "ShowProfile", "Account")</li>*@
                         <li>
-                            <a href="@Url.Action("ShowProfile", "Account")">
-                                <i class="fa fa-user" aria-hidden="true" style="color:wheat"></i>
+                            <a href="@Url.Action("Index", "Posts")">
+                                <i class="fa fa-rss-square" aria-hidden="true" style="color:wheat"></i>
                                 <span>
-                                    <strong>Welcome! @User.Identity.Name</strong>
+                                    <strong>Home</strong>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="navbar-collapse collapse">
+                    @*<ul class="nav navbar-nav">
+                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("About", "About", "Home")</li>
+                            <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                        </ul>*@
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <ul class="nav navbar-nav navbar-right">
+                            @*<li>@Html.ActionLink("Welcome!" + @User.Identity.Name, "ShowProfile", "Account")</li>*@
+                            <li>
+                                <a href="@Url.Action("ShowProfile", "Account")">
+                                    <i class="fa fa-user" aria-hidden="true" style="color:wheat"></i>
+                                    <span>
+                                        <strong>Welcome! @User.Identity.Name</strong>
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+
+                                @*</i>@Html.ActionLink("Log Off", "LogOff", "Account")*@
+                                <a href="@Url.Action("LogOff", "Account")">
+                                    <i class="fa fa-sign-out" aria-hidden="true" style="color:wheat"></i>
+                                    <span>
+                                        <strong>Sign Out</strong>
+                                    </span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    }
+
+                    else
+                    {  <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            @*@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })*@
+                            <a href="@Url.Action("Register", "Account",routeValues: new { id = "registerLink" })">
+                                <i class="fa fa-user-plus" aria-hidden="true" style="color:wheat"></i>
+                                <span>
+                                    <strong>Register</strong>
                                 </span>
                             </a>
                         </li>
                         <li>
-                            
-                                @*</i>@Html.ActionLink("Log Off", "LogOff", "Account")*@
-                            <a href="@Url.Action("LogOff", "Account")">
-                                <i class="fa fa-sign-out" aria-hidden="true" style="color:wheat"></i>
-                                <span>
-                                    <strong>Sign Out</strong>
-                                </span>
-                            </a>
-                    </li>
-                 
-                </ul>
-                }
-
-                else
-                {  <ul class="nav navbar-nav navbar-right">
-                    <li>
-                @*@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })*@
-                        <a href="@Url.Action("Register", "Account",routeValues: new { id = "registerLink" })">
-                            <i class="fa fa-user-plus" aria-hidden="true" style="color:wheat"></i>
-                            <span>
-                                <strong>Register</strong>
-                            </span>
-                        </a>
-                </li>
-                    <li>@*@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })*@
-                        <a href="@Url.Action("Login", "Account",routeValues: new { id = "registerLink" })">
-                            <i class="fa fa-sign-in" aria-hidden="true" style="color:wheat"></i>
+                            @*@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })*@
+                            <a href="@Url.Action("Login", "Account",routeValues: new { id = "registerLink" })">
+                                <i class="fa fa-sign-in" aria-hidden="true" style="color:wheat"></i>
                                 <span>
                                     <strong>Log In</strong>
                                 </span>
-                                  </a>
-                </li>
-                </ul>}
+                            </a>
+                        </li>
+                    </ul>}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
-    </div>
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryval")
-    @RenderSection("scripts", required: false)
-</body>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/jqueryval")
+        @RenderSection("scripts", required: false)
+
+    </body>
 </html>
